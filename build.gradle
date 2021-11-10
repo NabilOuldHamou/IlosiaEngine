@@ -15,9 +15,6 @@ repositories {
 
 dependencies {
 
-    //PNG DECODER
-    implementation group: 'org.l33tlabs.twl', name: 'pngdecoder', version: '1.0'
-
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
     implementation "org.joml:joml:${jomlVersion}"

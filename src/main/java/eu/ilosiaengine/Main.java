@@ -10,7 +10,7 @@ public class Main {
         try {
             IGameLogic gameLogic = new DummyGame();
             Engine engine = new Engine("GAME",
-                    1280, 720, true, gameLogic);
+                    1280, 720, false, gameLogic);
             engine.run();
         } catch (Exception e) {
             e.printStackTrace();
