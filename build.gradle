@@ -7,13 +7,17 @@ project.ext.lwjglNatives = "natives-windows"
 project.ext.jomlVersion = "1.10.2"
 
 group 'eu.ilosiaengine'
-version '0.0.1'
+version '0.1.0'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+
+    //PNG DECODER
+    implementation group: 'org.l33tlabs.twl', name: 'pngdecoder', version: '1.0'
+
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
     implementation "org.joml:joml:${jomlVersion}"

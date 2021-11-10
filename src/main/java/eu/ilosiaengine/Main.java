@@ -1,30 +1,20 @@
 package eu.ilosiaengine;
 
-import eu.ilosiaengine.core.Engine;
-import eu.ilosiaengine.core.Window;
+import eu.ilosiaengine.engine.Engine;
+import eu.ilosiaengine.engine.IGameLogic;
 
 public class Main {
 
-    private static Window window;
-    private static TestGameLogic game;
-
     public static void main(String[] args) {
-        window = new Window("Game", 1280, 720, false);
-        game = new TestGameLogic();
-        Engine engine = new Engine();
 
         try {
-            engine.start();
+            IGameLogic gameLogic = new DummyGame();
+            Engine engine = new Engine("GAME",
+                    1280, 720, true, gameLogic);
+            engine.run();
         } catch (Exception e) {
             e.printStackTrace();
+            System.exit(-1);
         }
-    }
-
-    public static Window getWindow() {
-        return window;
-    }
-
-    public static TestGameLogic getGame() {
-        return game;
     }
 }
