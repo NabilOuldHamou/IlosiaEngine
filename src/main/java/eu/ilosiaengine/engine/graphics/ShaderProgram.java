@@ -48,6 +48,10 @@ public class ShaderProgram {
         }
     }
 
+    public void setUniform(String uniformName, int value) {
+        GL20.glUniform1i(uniforms.get(uniformName), value);
+    }
+
     public void createVertexShader(String shaderCode) throws Exception {
         vertexShaderId = createShader(shaderCode, GL20.GL_VERTEX_SHADER);
     }

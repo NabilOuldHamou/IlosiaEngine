@@ -1,14 +1,18 @@
 package eu.ilosiaengine.engine;
 
+import eu.ilosiaengine.engine.io.MouseInput;
+
 public class Engine implements Runnable {
 
     public static final int TICKS_PER_SECOND = 30;
 
     private final Window window;
     private final IGameLogic gameLogic;
+    private final MouseInput mouseInput;
 
     public Engine(String title, int width, int height, boolean vSync, IGameLogic gameLogic) throws Exception {
         window = new Window(title, width, height, vSync);
+        mouseInput = new MouseInput();
         this.gameLogic = gameLogic;
     }
 
@@ -27,6 +31,7 @@ public class Engine implements Runnable {
     protected void init() throws Exception {
         window.init();
         gameLogic.init(window);
+        mouseInput.init(window);
     }
 
     private void gameLoop() {
@@ -71,11 +76,12 @@ public class Engine implements Runnable {
     }
 
     protected void input() {
-        gameLogic.input(window);
+        mouseInput.input(window);
+        gameLogic.input(window, mouseInput);
     }
 
     protected void update(float interval) {
-        gameLogic.update(interval);
+        gameLogic.update(interval, mouseInput);
     }
 
     protected void render() {

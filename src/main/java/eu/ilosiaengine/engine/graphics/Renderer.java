@@ -1,7 +1,9 @@
 package eu.ilosiaengine.engine.graphics;
 
+import eu.ilosiaengine.engine.Camera;
 import eu.ilosiaengine.engine.GameObject;
 import eu.ilosiaengine.engine.Window;
+import eu.ilosiaengine.engine.utils.Transformation;
 import eu.ilosiaengine.engine.utils.Utils;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
@@ -32,10 +34,11 @@ public class Renderer {
 
         // Creating the projection matrix
         shaderProgram.createUniform("projectionMatrix");
-        shaderProgram.createUniform("worldMatrix");
+        shaderProgram.createUniform("modelViewMatrix");
+        shaderProgram.createUniform("texture_sampler");
     }
 
-    public void render(Window window, GameObject[] gameObjects) {
+    public void render(Window window, Camera camera, GameObject[] gameObjects) {
         clear();
 
         if (window.isResized()) {
@@ -50,15 +53,13 @@ public class Renderer {
                 , Z_NEAR, Z_FAR);
         shaderProgram.setUniform("projectionMatrix", projectionMatrix);
 
+        Matrix4f viewMatrix = transformation.getViewMatrix(camera);
+
+        shaderProgram.setUniform("texture_sampler", 0);
         for (GameObject gameObject : gameObjects) {
 
-            Matrix4f worldMatrix =
-                    transformation.getWorldMatrix(
-                            gameObject.getPosition(),
-                            gameObject.getRotation(),
-                            gameObject.getScale()
-                    );
-            shaderProgram.setUniform("worldMatrix", worldMatrix);
+            Matrix4f modelViewMatrix = transformation.getModelViewMatrix(gameObject, viewMatrix);
+            shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
 
             gameObject.getMesh().render();
         }

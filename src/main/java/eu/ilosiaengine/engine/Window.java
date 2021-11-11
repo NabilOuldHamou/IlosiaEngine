@@ -136,4 +136,8 @@ public class Window {
     public void setvSync(boolean vSync) {
         this.vSync = vSync;
     }
+
+    public long getWindow() {
+        return window;
+    }
 }
