@@ -32,10 +32,12 @@ public class Renderer {
         shaderProgram.createFragmentShader(Utils.loadResource("/shaders/fragment.fs"));
         shaderProgram.link();
 
-        // Creating the projection matrix
+        // Creating the uniforms that will be used in the shaders
         shaderProgram.createUniform("projectionMatrix");
         shaderProgram.createUniform("modelViewMatrix");
         shaderProgram.createUniform("texture_sampler");
+        shaderProgram.createUniform("color");
+        shaderProgram.createUniform("useColor");
     }
 
     public void render(Window window, Camera camera, GameObject[] gameObjects) {
@@ -58,8 +60,13 @@ public class Renderer {
         shaderProgram.setUniform("texture_sampler", 0);
         for (GameObject gameObject : gameObjects) {
 
+            Mesh mesh = gameObject.getMesh();
+
             Matrix4f modelViewMatrix = transformation.getModelViewMatrix(gameObject, viewMatrix);
             shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
+
+            shaderProgram.setUniform("color", mesh.getColor());
+            shaderProgram.setUniform("useColor", mesh.isTextured() ? 0 : 1);
 
             gameObject.getMesh().render();
         }

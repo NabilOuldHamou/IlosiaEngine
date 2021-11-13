@@ -2,10 +2,14 @@ package eu.ilosiaengine.engine.utils;
 
 import org.lwjgl.system.MemoryUtil;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Utils {
@@ -34,6 +38,19 @@ public class Utils {
         }
 
         return result;
+    }
+
+    public static List<String> readAllLines(String fileName) throws Exception {
+        List<String> list = new ArrayList<>();
+
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(Class.forName(Utils.class.getName()).getResourceAsStream(fileName)))) {
+            String line;
+
+            while ((line = bufferedReader.readLine()) != null) {
+                list.add(line);
+            }
+        }
+        return list;
     }
 
 }
