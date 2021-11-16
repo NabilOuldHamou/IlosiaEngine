@@ -1,6 +1,6 @@
 package eu.ilosiaengine.engine.graphics;
 
-import org.joml.Vector3f;
+import eu.ilosiaengine.engine.lighting.Material;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.MemoryUtil;
 
@@ -11,13 +11,10 @@ import java.util.List;
 
 public class Mesh {
 
-    private static final Vector3f DEFAULT_COLOR = new Vector3f(1.0f, 1.0f, 1.0f);
-
     private final int vaoId;
     private final List<Integer> vboIdList;
     private final int vertexCount;
-    private Texture texture;
-    private Vector3f color;
+    private Material material;
 
     public Mesh(float[] vertices, float[] textureCoords, float[] normals, int[] indices) {
         FloatBuffer verticesBuffer = null;
@@ -25,7 +22,6 @@ public class Mesh {
         FloatBuffer normalsBuffer = null;
         IntBuffer indicesBuffer = null;
         try {
-            color = DEFAULT_COLOR;
             vertexCount = indices.length;
             vboIdList = new ArrayList<>();
 
@@ -34,6 +30,7 @@ public class Mesh {
 
             // Vertices
             int vboId = GL30.glGenBuffers();
+            vboIdList.add(vboId);
             verticesBuffer = MemoryUtil.memAllocFloat(vertices.length);
             verticesBuffer.put(vertices).flip();
             GL30.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
@@ -50,6 +47,16 @@ public class Mesh {
             GL30.glBufferData(GL15.GL_ARRAY_BUFFER, textureCoordsBuffer, GL15.GL_STATIC_DRAW);
             GL30.glEnableVertexAttribArray(1);
             GL30.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 0, 0);
+
+            // NORMALS VBO
+            vboId = GL30.glGenBuffers();
+            vboIdList.add(vboId);
+            normalsBuffer = MemoryUtil.memAllocFloat(normals.length);
+            normalsBuffer.put(normals).flip();
+            GL30.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
+            GL30.glBufferData(GL15.GL_ARRAY_BUFFER, normalsBuffer, GL15.GL_STATIC_DRAW);
+            GL30.glEnableVertexAttribArray(2);
+            GL30.glVertexAttribPointer(2, 3, GL11.GL_FLOAT, false, 0, 0);
 
             // Index VBO
             vboId = GL30.glGenBuffers();
@@ -81,12 +88,12 @@ public class Mesh {
     }
 
     public void render() {
-
-       if (texture != null) {
+        Texture texture = material.getTexture();
+        if (texture != null) {
            GL30.glActiveTexture(GL13.GL_TEXTURE0);
 
            GL30.glBindTexture(GL11.GL_TEXTURE_2D, texture.getId());
-       }
+        }
 
         GL30.glBindVertexArray(vaoId);
 
@@ -104,6 +111,7 @@ public class Mesh {
             GL30.glDeleteBuffers(vboId);
         }
 
+        Texture texture = material.getTexture();
         if (texture != null) {
             texture.cleanup();
         }
@@ -120,23 +128,11 @@ public class Mesh {
         return vertexCount;
     }
 
-    public boolean isTextured() {
-        return this.texture != null;
+    public Material getMaterial() {
+        return material;
     }
 
-    public Texture getTexture() {
-        return texture;
-    }
-
-    public void setTexture(Texture texture) {
-        this.texture = texture;
-    }
-
-    public Vector3f getColor() {
-        return color;
-    }
-
-    public void setColor(Vector3f color) {
-        this.color = color;
+    public void setMaterial(Material material) {
+        this.material = material;
     }
 }

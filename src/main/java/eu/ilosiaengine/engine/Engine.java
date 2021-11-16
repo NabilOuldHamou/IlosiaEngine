@@ -6,6 +6,9 @@ public class Engine implements Runnable {
 
     public static final int TICKS_PER_SECOND = 30;
 
+    private int fps;
+    private int ticks;
+
     private final Window window;
     private final IGameLogic gameLogic;
     private final MouseInput mouseInput;
@@ -37,8 +40,8 @@ public class Engine implements Runnable {
     private void gameLoop() {
         boolean running = true;
 
-        int fps = 0;
-        int ticks = 0;
+        fps = 0;
+        ticks = 0;
         float tickRate = 1f / TICKS_PER_SECOND;
         float accumulator = 0;
         long currentTime;
@@ -55,18 +58,16 @@ public class Engine implements Runnable {
 
             while (accumulator > tickRate) {
                 update(tickRate);
-                ticks++;
                 accumulator -= tickRate;
             }
 
             render();
-            fps++;
 
             if (System.currentTimeMillis() + 1000 >= time) {
                 System.out.println(fps + " " + ticks);
-                time += 1000;
                 ticks = 0;
                 fps = 0;
+                time += 1000;
             }
         }
     }
@@ -82,11 +83,20 @@ public class Engine implements Runnable {
 
     protected void update(float interval) {
         gameLogic.update(interval, mouseInput);
+        ticks++;
     }
 
     protected void render() {
         gameLogic.render(window);
         window.update();
+        fps++;
     }
 
+    public int getTicks() {
+        return ticks;
+    }
+
+    public int getFps() {
+        return fps;
+    }
 }
