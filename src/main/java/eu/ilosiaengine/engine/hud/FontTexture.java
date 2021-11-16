@@ -104,16 +104,8 @@ public class FontTexture {
         return charMap.get(c);
     }
 
-    // CHAR INFO CLASS
-    public static class CharInfo {
-
-        private final int startX;
-        private final int width;
-
-        public CharInfo(int startX, int width) {
-            this.startX = startX;
-            this.width = width;
-        }
+    // CHAR INFO RECORD
+    public record CharInfo(int startX, int width) {
 
         public int getStartX() {
             return startX;
