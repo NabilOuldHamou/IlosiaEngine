@@ -36,11 +36,14 @@ public class DummyGame implements IGameLogic {
     private float spotAngle = 0;
     private float spotInc = 1;
 
+    private boolean exclusiveMouse;
+
     public DummyGame() {
         renderer = new Renderer();
         camera = new Camera();
         cameraInc = new Vector3f();
         lightAngle = -90;
+        exclusiveMouse = true;
     }
 
     @Override
@@ -62,7 +65,7 @@ public class DummyGame implements IGameLogic {
 
         // Point Light
         Vector3f lightPosition = new Vector3f(0, 0, 1);
-        float lightIntensity = 1.0f;
+        float lightIntensity = 0.3f;
         PointLight pointLight = new PointLight(new Vector3f(1, 1, 1), lightPosition, lightIntensity);
         PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
         pointLight.setAttenuation(att);
@@ -70,7 +73,7 @@ public class DummyGame implements IGameLogic {
 
         // Spot Light
         lightPosition = new Vector3f(0, 0.0f, 10f);
-        pointLight = new PointLight(new Vector3f(1, 1, 1), lightPosition, lightIntensity);
+        pointLight = new PointLight(new Vector3f(1, 0, 1), lightPosition, lightIntensity);
         att = new PointLight.Attenuation(0.0f, 0.0f, 0.02f);
         pointLight.setAttenuation(att);
         Vector3f coneDir = new Vector3f(0, 0, -1);
@@ -79,7 +82,7 @@ public class DummyGame implements IGameLogic {
         spotLightList = new SpotLight[]{spotLight, new SpotLight(spotLight)};
 
         lightPosition = new Vector3f(-1, 0, 0);
-        directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightPosition, lightIntensity);
+        directionalLight = new DirectionalLight(new Vector3f(1, 0, 0), lightPosition, lightIntensity);
 
         GLFW.glfwSetInputMode(window.getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
     }
@@ -104,7 +107,13 @@ public class DummyGame implements IGameLogic {
             cameraInc.y = 1;
         }
         if (window.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
-            GLFW.glfwSetInputMode(window.getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+            if (exclusiveMouse == true) {
+                GLFW.glfwSetInputMode(window.getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+                exclusiveMouse = false;
+            } else {
+                GLFW.glfwSetInputMode(window.getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
+                exclusiveMouse = true;
+            }
         }
         float lightPos = spotLightList[0].getPointLight().getPosition().z;
         if (window.isKeyPressed(GLFW.GLFW_KEY_N)) {
@@ -157,7 +166,9 @@ public class DummyGame implements IGameLogic {
         directionalLight.getDirection().y = (float) Math.cos(angRad);
 
         // Reset cursor position
-        GLFW.glfwSetCursorPos(window.getWindow(), window.getWidth() / 2, window.getHeight() / 2);
+        if (exclusiveMouse == true) {
+            GLFW.glfwSetCursorPos(window.getWindow(), window.getWidth() / 2, window.getHeight() / 2);
+        }
     }
 
     @Override
