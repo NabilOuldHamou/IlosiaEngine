@@ -2,6 +2,7 @@ package eu.ilosiaengine.engine.graphics;
 
 import eu.ilosiaengine.engine.GameObject;
 import eu.ilosiaengine.engine.hud.FontTexture;
+import eu.ilosiaengine.engine.lighting.Material;
 import eu.ilosiaengine.engine.utils.Utils;
 
 import java.util.ArrayList;
@@ -79,7 +80,22 @@ public class TextObject extends GameObject {
         }
 
         float[] posArr = Utils.listToArray(positions);
-        float[] textureCoordsArray
+        float[] textureCoordsArray = Utils.listToArray(textureCoords);
+        int[] indicesArr = indices.stream().mapToInt(i->i).toArray();
+
+        Mesh mesh = new Mesh(posArr, textureCoordsArray, normals, indicesArr);
+        mesh.setMaterial(new Material(fontTexture.getTexture()));
+
+        return mesh;
     }
 
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+        this.getMesh().deleteBuffers();
+        this.setMesh(buildMesh());
+    }
 }
